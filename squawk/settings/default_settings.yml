@@ -1,0 +1,16 @@
+---  # squawk User configuration file
+
+app:
+  loglevel: INFO
+  check_for_updates: true
+  update_check_url: "https://github.com/in03/squawk" # If you fork the repo, change this to your fork
+
+resolve:
+  render_preset: "Audio Only" # Must exist in Resolve render presets
+  subtitle_folder_path: "/Assets/subtitles"
+
+paths:
+  working_dir: R:/Squawk  # Where to store transcription working files
+
+text_to_speech:
+  model: medium # [tiny, small, medium, large]

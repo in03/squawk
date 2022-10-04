@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "squawk"
+version = "0.1.0"
+description = "Automatic subtitles for Davinci Resolve with OpenAI Whisper"
+authors = ["in03 <in03@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+whisper = {git = "https://github.com/openai/whisper.git"}
+notify-py = "^0.3.3"
+typer = {extras = ["all"], version = "^0.6.1"}
+pyfiglet = "^0.8.post1"
+deepdiff = "^5.8.1"
+"ruamel.yaml" = "^0.17.21"
+yaspin = "^2.2.0"
+schema = "^0.7.5"
+requests = "^2.28.1"
+commonregex = "^1.5.3"
+torch = "^1.12.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+squawk = "squawk.app.cli:main"
