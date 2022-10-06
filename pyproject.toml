@@ -9,7 +9,6 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 whisper = {git = "https://github.com/openai/whisper.git"}
-notify-py = "^0.3.3"
 typer = {extras = ["all"], version = "^0.6.1"}
 pyfiglet = "^0.8.post1"
 deepdiff = "^5.8.1"
@@ -19,6 +18,13 @@ schema = "^0.7.5"
 requests = "^2.28.1"
 commonregex = "^1.5.3"
 torch = "^1.12.1"
+tqdm = "^4.64.1"
+numpy = "^1.23.3"
+transformers = ">=4.19.0"
+more-itertools = "^8.14.0"
+notify-py = {git = "https://github.com/in03/notify-py"}
+pydavinci = {git = "https://github.com/in03/pydavinci"}
+ffmpeg-python = "0.2.0"
 
 
 [build-system]

@@ -30,13 +30,6 @@ setup_rich_logging()
 logger = logging.getLogger(__name__)
 
 
-def install_rich_tracebacks(show_locals=False):
-    """Install rich tracebacks"""
-    from rich.traceback import install
-
-    install(show_locals=show_locals)
-
-
 def app_exit(level: int = 0, timeout: int = 0, cleanup_funcs: list = []):
 
     """
@@ -72,7 +65,7 @@ def app_exit(level: int = 0, timeout: int = 0, cleanup_funcs: list = []):
     sys.exit(level)
 
 
-def notify(message: str, title: str):
+def notify(title: str, message: str):
     """Cross platform system notification
 
     Args:

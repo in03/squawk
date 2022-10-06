@@ -19,7 +19,7 @@ from schema import SchemaError
 
 from .schema import settings_schema
 
-traceback.install()
+traceback.install(show_locals=False)
 logger = logging.getLogger(__name__)
 
 DEFAULT_SETTINGS_FILE = os.path.join(

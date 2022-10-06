@@ -16,11 +16,11 @@ settings_schema = Schema(
             "working_dir": lambda p: os.path.exists(p),
         },
         "resolve": {
-            "render_preset": str,
             "subtitle_folder_path": str,
         },
         "text_to_speech": {
             "model": lambda s: s in ["tiny", "small", "medium", "large"],
+            "translate_to_english": bool,
         },
     },
     ignore_extra_keys=True,

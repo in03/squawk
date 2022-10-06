@@ -1,16 +1,17 @@
 #!/usr/bin/env python3.6
 
 import logging
-import webbrowser
-from typing import List, Optional
+from typing import Optional
 
 import typer
 from pyfiglet import Figlet
 from rich import print, traceback
 from rich.console import Console
 from rich.rule import Rule
+from pydavinci import davinci
+from pydavinci.exceptions import ObjectNotFound
+from squawk.app import main
 from squawk.utils import core, pkg_info
-from squawk.app.transcribe import Transcribe
 
 # TODO: Add global option to hide banner
 # labels: enhancement
@@ -18,13 +19,18 @@ hide_banner = typer.Option(
     default=False, help="Hide the title and build info on startup"
 )
 
-traceback.install()
-logger = logging.getLogger(__name__)
+from squawk.settings import SettingsManager
 
+settings = SettingsManager()
+logger = logging.getLogger(__name__)
+logger.setLevel(settings["app"]["loglevel"])
+traceback.install(show_locals=False)
 
 # Init classes
 cli_app = typer.Typer()
+
 console = Console()
+resolve = davinci.Resolve()
 
 
 @cli_app.callback(invoke_without_command=True)
@@ -86,68 +92,6 @@ def cli_init():
 
 
 # Commands
-
-
-@cli_app.command()
-def tts():
-    """
-    Queue proxies from the currently open
-    DaVinci Resolve timeline
-    """
-
-    # Init
-    from squawk.settings import SettingsManager
-
-    settings = SettingsManager()
-    logger = logging.getLogger(__name__)
-    logger.setLevel(settings["app"]["loglevel"])
-    # End init
-
-    print("\n")
-    console.rule(
-        f"[green bold]Queuing proxies from Resolve's active timeline[/] :outbox_tray:",
-        align="left",
-    )
-    print("\n")
-
-    transcribe = Transcribe()
-    transcribe.run()
-
-
-# @cli_app.command(
-#     context_settings={"allow_extra_args": True, "ignore_unknown_options": True}
-# )
-# def celery(
-#     ctx: typer.Context,
-#     celery_command: List[str] = typer.Argument(..., help="A command to pass to Celery"),
-# ):
-#     """
-#     Pass commands to Celery buried in venv.
-
-#     Runs `celery -A squawk.worker [celery_command]`
-#     at the absolute location of the package's Celery executable.
-#     Useful when the celery project is buried in a virtual environment and you want
-#     to do something a little more custom like purge jobs from a custom queue name.
-
-#     See https://docs.celeryq.dev/en/latest/reference/cli.html for proper usage.
-#     """
-
-#     # print(ctx.params["celery_command"])
-
-#     print("\n")
-#     console.rule(f"[cyan bold]Celery command :memo:", align="left")
-#     print("\n")
-
-#     subprocess.run(
-#         [
-#             pkg_info.get_script_from_package("celery"),
-#             "-A",
-#             "squawk.worker",
-#             *celery_command,
-#         ]
-#     )
-
-
 @cli_app.command()
 def config():
     """Open user settings configuration file for editing"""
@@ -162,14 +106,61 @@ def config():
     )
     print("\n")
 
-    # TODO: Cross platform alternative to this hack?
-    # labels: enhancement
-    webbrowser.open_new(settings.user_file)
+    typer.launch(settings.user_file)
 
 
-def main():
-    cli_app()
+@cli_app.command("timeline")
+def transcribe_timeline(timeline_name: Optional[str] = typer.Argument(None)):
+
+    """
+    Transcribe a Resolve timeline and import the transcription into Resolve.
+    """
+
+    if resolve.project.is_rendering():
+        logger.error(
+            "[red]Resolve is currently rendering. We can't add any more jobs until it's finished"
+        )
+
+    # Change to edit page to clear any glitchy read-only mode
+    resolve.page = "edit"
+
+    # Switch if timeline chosen
+    if timeline_name:
+
+        try:
+            resolve.project.open_timeline(timeline_name)
+        except ObjectNotFound:
+            logger.error(
+                f"[red]Could not open timeline[/] '{timeline_name}'"
+                "Are you sure it exists?"
+            )
+            core.app_exit(1, -1)
+    else:
+        timeline_name = resolve.active_timeline.name
+
+    print("\n")
+    console.rule(
+        f"[green bold]Transcribing audio on timeline {timeline_name}[/] :outbox_tray:",
+        align="left",
+    )
+    print("\n")
+
+    media_file = main.render_timeline(settings["paths"]["working_dir"])
+    srt_file = main.tts(media_file)
+    main.import_srt(srt_file)
 
 
-if __name__ == "__main__":
-    main()
+@cli_app.command("file")
+def transcribe_file(media_file: str):
+    """
+    Transcribe a media file and import the transcription into Resolve.
+
+    Args:
+        media_file (str): Path to an ffmpeg supported media file.
+    """
+    srt_file = main.tts(media_file)
+    main.import_srt(srt_file)
+
+
+# RUN
+cli_app()

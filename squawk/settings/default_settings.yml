@@ -6,7 +6,6 @@ app:
   update_check_url: "https://github.com/in03/squawk" # If you fork the repo, change this to your fork
 
 resolve:
-  render_preset: "Audio Only" # Must exist in Resolve render presets
   subtitle_folder_path: "/Assets/subtitles"
 
 paths:
@@ -14,3 +13,4 @@ paths:
 
 text_to_speech:
   model: medium # [tiny, small, medium, large]
+  translate_to_english: True
