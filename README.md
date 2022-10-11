@@ -26,7 +26,30 @@ Install with pipx
 pipx install git+https://github.com/in03/squawk
 ```
 
-## Commands
+## Usage
+Simply run:
+```
+squawk timeline
+```
+to render, transcribe and import the subtitles of the active timeline.
+
+You can pass "Timeline Name" as an optional argument to select a specific timeline:
+```
+squawk timeline "My Timeline"
+```
+If you already have the file you're transcribing rendered, pass the file:
+```
+squawk file "My File.mov"
+```
+
+### Transcription Accuracy
+Depending on the quality of your audio, you can try different language models. The larger the model, the higher chance of an accurate transcription, but the slower the analysis. You can choose the model used in the user configuration file. 
+
+If your audio is clear and high-quality like a professional VO, you might get away just fine with the `tiny` model. If your audio contains dialogue with lots of sound effects, music and people talking over each other, you might want to start with `medium`. Try `large` as a last resort if the transcription contains a lot of incorrect words. 
+
+You can see a comparison of Whisper's language models [here](https://github.com/openai/whisper/blob/main/model-card.md). 
+
+### Commands
 
 ```
  _____ _____ _____ _____ _ _ _ _____ 
