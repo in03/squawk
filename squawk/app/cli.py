@@ -1,17 +1,21 @@
 #!/usr/bin/env python3.6
 
 import logging
+import os
 from typing import Optional
 
 import typer
 from pyfiglet import Figlet
 from rich import print, traceback
+from squawk.utils.core import setup_rich_logging
 from rich.console import Console
 from rich.rule import Rule
 from pydavinci import davinci
 from pydavinci.exceptions import ObjectNotFound
 from squawk.app import main
-from squawk.utils import core, pkg_info
+from squawk.utils import core, pkg_info, checks
+
+setup_rich_logging()
 
 # TODO: Add global option to hide banner
 # labels: enhancement
@@ -36,7 +40,7 @@ resolve = davinci.Resolve()
 @cli_app.callback(invoke_without_command=True)
 def run_without_args():
     draw_banner()
-    print("Run [bold]squawk --help[/] for a list of commands")
+    run_checks()
 
 
 def draw_banner():
@@ -71,18 +75,16 @@ def draw_banner():
 def run_checks():
     """Run before CLI App load."""
 
-    from squawk.settings import SettingsManager
-    from squawk.utils import checks
+    # # Check for any updates and inject version info into user settings.
+    # version_info = checks.check_for_updates(
+    #     github_url=settings["app"]["update_check_url"],
+    #     package_name="squawk",
+    # )
 
-    settings = SettingsManager()
+    # settings.update({"version_info": version_info})
 
-    # Check for any updates and inject version info into user settings.
-    version_info = checks.check_for_updates(
-        github_url=settings["app"]["update_check_url"],
-        package_name="squawk",
-    )
-
-    settings.update({"version_info": version_info})
+    if settings["text_to_speech"]["device"] == "cuda":
+        checks.check_for_cuda()
 
 
 def cli_init():
@@ -158,6 +160,11 @@ def transcribe_file(media_file: str):
     Args:
         media_file (str): Path to an ffmpeg supported media file.
     """
+
+    if not os.path.exists(media_file):
+        print(f"[red]Sorry, no file found at path: '{media_file}'")
+        core.app_exit(1, -1)
+
     srt_file = main.tts(media_file)
     main.import_srt(srt_file)
 

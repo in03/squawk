@@ -19,6 +19,7 @@ settings_schema = Schema(
             "subtitle_folder_path": str,
         },
         "text_to_speech": {
+            "device": lambda s: s in ["auto", "cpu", "cuda"],
             "model": lambda s: s in ["tiny", "small", "medium", "large"],
             "translate_to_english": bool,
         },
