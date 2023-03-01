@@ -75,14 +75,6 @@ def draw_banner():
 def run_checks():
     """Run before CLI App load."""
 
-    # # Check for any updates and inject version info into user settings.
-    # version_info = checks.check_for_updates(
-    #     github_url=settings["app"]["update_check_url"],
-    #     package_name="squawk",
-    # )
-
-    # settings.update({"version_info": version_info})
-
     if settings["text_to_speech"]["device"] == "cuda":
         checks.check_for_cuda()
 
