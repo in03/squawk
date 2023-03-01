@@ -21,6 +21,7 @@ settings_schema = Schema(
         "text_to_speech": {
             "model": lambda s: s in ["tiny", "small", "medium", "large"],
             "translate_to_english": bool,
+            "words_per_screen": int,
         },
     },
     ignore_extra_keys=True,
