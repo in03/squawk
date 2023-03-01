@@ -12,6 +12,5 @@ paths:
   working_dir: R:/Squawk  # Where to store transcription working files
 
 text_to_speech:
-  device: auto # [auto, cpu, cuda]
-  model: medium # [tiny, small, medium, large]
+  model: small # [tiny, small, medium, large] - larger models are more accurate
   translate_to_english: True
