@@ -6,6 +6,7 @@ from datetime import datetime
 from time import sleep
 
 import whisper
+import stable_whisper
 from pydavinci import davinci
 from rich import traceback
 from rich.console import Console
@@ -13,6 +14,7 @@ from rich.progress import Progress
 from squawk.settings import SettingsManager
 from squawk.utils import core
 from whisper import utils as whisper_utils
+import srt
 
 # Init
 settings = SettingsManager()
@@ -207,13 +209,11 @@ def tts(media_file: str) -> str:
     srt_path = os.path.join(
         settings["paths"]["working_dir"], (os.path.basename(media_file) + ".srt")
     )
-    with open(srt_path, "w", encoding="utf-8") as srt:
-        whisper_utils.write_srt(result["segments"], file=srt)
-
+    stable_whisper.results_to_word_srt(result, srt_path)
     return srt_path
 
 
-def import_srt(srt_file):
+def import_srt(srt_filepath):
     """
     Import SRT file into Resolve
     """
@@ -224,7 +224,28 @@ def import_srt(srt_file):
     # Create or find path for srt file
     ensure_path(settings["resolve"]["subtitle_folder_path"])
 
-    logger.info(f"[cyan]Importing SRT file: '{srt_file}'")
-    mpi = media_pool.import_media([srt_file])
+    logger.info(f"[cyan]Importing SRT file: '{srt_filepath}'")
+    mpi = media_pool.import_media([srt_filepath])
     assert mpi
     logger.debug(f"[magenta]Media pool item: {[mpi]}")
+
+
+def retime_srt(srt_filepath):
+    
+    with open(srt_filepath) as srt_file:
+        subtitle_generator = srt.parse(srt_file.read())
+    
+    subtitles = list(subtitle_generator)
+    
+    for i, x in enumerate(subtitles):
+        
+        words_per_screen = settings['text_to_speech']['words_per_screen']
+        words = x.content.split(" ")
+        logger.debug(f"[magenta]Sub num {i} has {len(words)} words")
+        
+        if over := len(words) - len(words_per_screen): 
+            
+            logger.debug(f"[magenta]Sub num {i} is {over} words over limit. Shifting.")
+            factor = len(words_per_screen) / len(words)
+            
+        

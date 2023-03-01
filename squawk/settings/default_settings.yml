@@ -14,3 +14,4 @@ paths:
 text_to_speech:
   model: small # [tiny, small, medium, large] - larger models are more accurate
   translate_to_english: True
+  words_per_screen: 15 # Limit the amount of words on screen at a time
