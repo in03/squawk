@@ -252,6 +252,47 @@ requires_python = ">=3.4"
 summary = "Tool to Detect Surrounding Shell"
 
 [[package]]
+name = "squawk"
+version = "0.2.0"
+requires_python = ">=3.10"
+summary = "Automatic subtitles for Davinci Resolve with OpenAI Whisper"
+dependencies = [
+    "commonregex>=1.5.4",
+    "deepdiff>=6.2.1",
+    "more-itertools>=9.0.0",
+    "notify-py>=0.3.2",
+    "numpy>=1.23.4",
+    "pydavinci @ git+https://github.com/in03/pydavinci",
+    "pyfiglet>=0.8.post1",
+    "requests>=2.28.1",
+    "ruamel.yaml>=0.17.21",
+    "schema>=0.7.5",
+    "setuptools>=65.5.0",
+    "tqdm>=4.64.1",
+    "transformers>=4.23.1",
+    "typer[all]>=0.6.1",
+    "whisper @ git+https://github.com/openai/whisper.git",
+    "yaspin>=2.2.0",
+]
+
+[[package]]
+name = "srt"
+version = "3.5.2"
+requires_python = ">=2.7"
+summary = "A tiny library for parsing, modifying, and composing SRT files."
+
+[[package]]
+name = "stable-ts"
+version = "1.0.1"
+requires_python = ">=3.7"
+git = "https://github.com/jianfch/stable-ts"
+revision = "8219e886f0aa3f15c60b8aacede509389557958c"
+summary = "Stabilizing timestamps of OpenAI's Whisper outputs down to word-level."
+dependencies = [
+    "whisper @ git+https://github.com/openai/whisper.git",
+]
+
+[[package]]
 name = "termcolor-whl"
 version = "1.1.2"
 requires_python = ">=2.6"
@@ -364,7 +405,7 @@ dependencies = [
 
 [metadata]
 lock_version = "4.0"
-content_hash = "sha256:3f9c5bfd841ca51274c057ce3d4d14fe7b2e671eb1726b4c16885ed28937fb6b"
+content_hash = "sha256:a12b9f28f5f941b8eec4013859fc84601ff7fe8a1d700dcd948558e6f8f9a408"
 
 [metadata.files]
 "certifi 2022.9.24" = [
@@ -665,6 +706,7 @@ content_hash = "sha256:3f9c5bfd841ca51274c057ce3d4d14fe7b2e671eb1726b4c16885ed28
     {url = "https://files.pythonhosted.org/packages/9e/cb/938214ac358fbef7058343b3765c79a1b7ed0c366f7f992ce7ff38335652/ruamel.yaml-0.17.21-py3-none-any.whl", hash = "sha256:742b35d3d665023981bd6d16b3d24248ce5df75fdb4e2924e93a05c1f8b61ca7"},
 ]
 "ruamel.yaml.clib 0.2.7" = [
+    {url = "https://files.pythonhosted.org/packages/11/50/b4ebeac05e40ab40d85659ec8629f9af54ed09f07b3269e17cbfb0fbecd6/ruamel.yaml.clib-0.2.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:41d0f1fa4c6830176eef5b276af04c89320ea616655d01327d5ce65e50575c94"},
     {url = "https://files.pythonhosted.org/packages/21/86/c0c950bfec9a9b2cc2b20a6e9309254b482437bc37116e46c7d058294d5d/ruamel.yaml.clib-0.2.7-cp38-cp38-win32.whl", hash = "sha256:3110a99e0f94a4a3470ff67fc20d3f96c25b13d24c6980ff841e82bafe827cac"},
     {url = "https://files.pythonhosted.org/packages/2e/37/8b463d153586e4c4ac7db54dc36bf7b6f5ce431b5352f9d226e93316abf5/ruamel.yaml.clib-0.2.7-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:2aa261c29a5545adfef9296b7e33941f46aa5bbd21164228e833412af4c9c75f"},
     {url = "https://files.pythonhosted.org/packages/35/bc/a1f58a339ffe891d92492f47b1dfa90b0957ccf8ad11f35f653a1a6b8c4e/ruamel.yaml.clib-0.2.7-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:a7b301ff08055d73223058b5c46c55638917f04d21577c95e00e0c4d79201a6b"},
@@ -710,6 +752,9 @@ content_hash = "sha256:3f9c5bfd841ca51274c057ce3d4d14fe7b2e671eb1726b4c16885ed28
 "shellingham 1.5.0" = [
     {url = "https://files.pythonhosted.org/packages/3d/1a/d31fce69c119df1fddab3706b63c53d363982c55d841d9c3839b12f15327/shellingham-1.5.0-py2.py3-none-any.whl", hash = "sha256:a8f02ba61b69baaa13facdba62908ca8690a94b8119b69f5ec5873ea85f7391b"},
     {url = "https://files.pythonhosted.org/packages/bd/e6/fdf53ebbf08016dba98f2b047d4db95790157f0e2eed3b14bb5754271475/shellingham-1.5.0.tar.gz", hash = "sha256:72fb7f5c63103ca2cb91b23dee0c71fe8ad6fbfd46418ef17dbe40db51592dad"},
+]
+"srt 3.5.2" = [
+    {url = "https://files.pythonhosted.org/packages/18/a3/e1466f7c86a9e5d3e462ed6eb3a548917e93cc1ee212cd927f8f4e887ae9/srt-3.5.2.tar.gz", hash = "sha256:7aa4ad5ce4126d3f53b3e7bc4edaa86653d0378bf1c0b1ab8c59f5ab41384450"},
 ]
 "termcolor-whl 1.1.2" = [
     {url = "https://files.pythonhosted.org/packages/2b/ad/9e826b1bd69dc3faa5abb7b6459528e16831c0e73b353479a467ed5ee995/termcolor_whl-1.1.2-py2.py3-none-any.whl", hash = "sha256:3e7eda7348bb90ddea2d7a2171df65ed4a37adf62574fbd5459198410fdba881"},
