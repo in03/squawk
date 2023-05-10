@@ -1,5 +1,4 @@
 import re
-from commonregex import link
 import os
 from schema import Schema, And, Optional
 
@@ -10,7 +9,7 @@ settings_schema = Schema(
             "loglevel": lambda s: s
             in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
             "check_for_updates": bool,
-            "update_check_url": lambda s: re.match(link, s),
+            "update_check_url": str,
         },
         "paths": {
             "working_dir": lambda p: os.path.exists(p),

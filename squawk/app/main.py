@@ -4,14 +4,16 @@ import time
 from datetime import datetime
 from time import sleep
 
-import whisper
+import librosa
+import numpy as np
 from pydavinci import davinci
 from rich import traceback
 from rich.console import Console
 from rich.progress import Progress
+from whispercpp import Whisper, api
+
 from squawk.settings import SettingsManager
 from squawk.utils import core
-from whisper import utils as whisper_utils
 
 # Init
 settings = SettingsManager()
@@ -118,9 +120,6 @@ def render_timeline(output_path: str) -> str:
         "ExportAudio": True,
         "FormatWidth": 1280,  # Necessary
         "FormatHeight": 720,  # Necessary
-        "AudioCodec": "aac",  # Not working?
-        "AudioBitDepth": 16,
-        "AudioSampleRate": 48000,
         "CustomName": custom_name,
         "TargetDir": output_path,
     }
@@ -134,10 +133,14 @@ def render_timeline(output_path: str) -> str:
 
     try:
 
-        if not project.render([render_job_id], interactive=False):
+        if not project.render([render_job_id], interactive=True):
             logger.error(
-                f"[red]Couldn't render job: [/]'{render_job_id}'"
-                "Please make sure the timeline isn't read-only if you're in collaborative mode."
+                f"[red]Couldn't render job:[/] '{render_job_id}'\n"
+                "[cyan]There could be a few reasons for this:[/]\n"
+                " - Is the project open in read-only mode?\n"
+                " - If you're in collaborative mode, can you make changes to the timeline?\n"
+                " - Is the export destination read-only?\n"
+                " - Do you actually have audio on your timeline?\n"
             )
             core.app_exit(1, -1)
 
@@ -185,7 +188,7 @@ def tts(media_file: str) -> str:
     if not os.path.exists(media_file):
         raise FileNotFoundError(f"Media file: {media_file} not found!")
 
-    model = whisper.load_model(settings["text_to_speech"]["model"])
+    whisper = Whisper.from_pretrained(f"{settings['text_to_speech']['model']}.en")
 
     core.notify("Squawk", "Starting transcription")
     start_time = time.time()
@@ -193,11 +196,8 @@ def tts(media_file: str) -> str:
     with Progress(transient=True) as progress:
 
         progress.add_task("[yellow]Transcribing", total=None)
-
-        if settings["text_to_speech"]["translate_to_english"]:
-            result = model.transcribe(media_file, task="translate")
-        else:
-            result = model.transcribe(media_file)
+        audio, _ = librosa.load(media_file)
+        transcription = whisper.transcribe(audio.astype(np.float32))
 
     core.notify(
         "Squawk", f"Processing finished after {int(time.time() - start_time)} seconds"
@@ -206,8 +206,9 @@ def tts(media_file: str) -> str:
     srt_path = os.path.join(
         settings["paths"]["working_dir"], (os.path.basename(media_file) + ".srt")
     )
-    with open(srt_path, "w", encoding="utf-8") as srt:
-        whisper_utils.write_srt(result["segments"], file=srt)
+    print(transcription)
+    # with open(srt_path, "w", encoding="utf-8") as srt:
+    #     whisper_utils.write_srt(result["segments"], file=srt)
 
     return srt_path
 
