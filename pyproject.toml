@@ -6,7 +6,7 @@ authors = [
     {name = "in03", email = "in03@users.noreply.github.com"},
 ]
 dependencies = [
-    "whisper @ git+https://github.com/openai/whisper.git",
+    "openai-whisper",
     "typer[all]>=0.6.1",
     "deepdiff>=6.2.1",
     "ruamel.yaml>=0.17.21",
@@ -22,7 +22,6 @@ dependencies = [
     "setuptools>=65.5.0",
     "notify-py>=0.3.2",
     "commonregex>=1.5.4",
-    "squawk>=0.2.0",
     "srt>=3.5.2",
     "stable-ts @ git+https://github.com/jianfch/stable-ts",
 ]
@@ -35,14 +34,6 @@ license = {text = "MIT"}
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
-
-[[tool.pdm.source]]
-url = "https://download.pytorch.org/whl/cu116"
-verify_ssl = true
-name = "pytorch"
-
-[tool.pdm.overrides]
-torch = "1.12.1+cu116"
 
 [tool]
 [tool.pdm]

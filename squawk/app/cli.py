@@ -75,9 +75,6 @@ def draw_banner():
 def run_checks():
     """Run before CLI App load."""
 
-    if settings["text_to_speech"]["device"] == "cuda":
-        checks.check_for_cuda()
-
 
 def cli_init():
 

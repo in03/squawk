@@ -137,10 +137,15 @@ def render_timeline(output_path: str) -> str:
 
     try:
 
-        if not project.render([render_job_id], interactive=False):
+        if not project.render([render_job_id], interactive=True):
             logger.error(
-                f"[red]Couldn't render job: [/]'{render_job_id}'"
-                "Please make sure the timeline isn't read-only if you're in collaborative mode."
+                f"[red]Couldn't render job:[/] '{render_job_id}'\n"
+                "There can be a few reasosn for this:\n"
+                " - The project has been opened in read-only mode\n"
+                " - The timeline is locked by another user (if in collaborative editing mode)\n"
+                " - The output directory hasn't been properly set\n"
+                " - The output file collides\n"
+                " - The timeline contains no audio\n"
             )
             core.app_exit(1, -1)
 
@@ -188,7 +193,7 @@ def tts(media_file: str) -> str:
     if not os.path.exists(media_file):
         raise FileNotFoundError(f"Media file: {media_file} not found!")
 
-    model = whisper.load_model(settings["text_to_speech"]["model"])
+    model = stable_whisper.load_model(settings["text_to_speech"]["model"])
 
     core.notify("Squawk", "Starting transcription")
     start_time = time.time()
@@ -209,7 +214,7 @@ def tts(media_file: str) -> str:
     srt_path = os.path.join(
         settings["paths"]["working_dir"], (os.path.basename(media_file) + ".srt")
     )
-    stable_whisper.results_to_word_srt(result, srt_path)
+    result.to_srt_vtt(srt_path)
     return srt_path
 
 
@@ -228,24 +233,4 @@ def import_srt(srt_filepath):
     mpi = media_pool.import_media([srt_filepath])
     assert mpi
     logger.debug(f"[magenta]Media pool item: {[mpi]}")
-
-
-def retime_srt(srt_filepath):
-    
-    with open(srt_filepath) as srt_file:
-        subtitle_generator = srt.parse(srt_file.read())
-    
-    subtitles = list(subtitle_generator)
-    
-    for i, x in enumerate(subtitles):
-        
-        words_per_screen = settings['text_to_speech']['words_per_screen']
-        words = x.content.split(" ")
-        logger.debug(f"[magenta]Sub num {i} has {len(words)} words")
-        
-        if over := len(words) - len(words_per_screen): 
-            
-            logger.debug(f"[magenta]Sub num {i} is {over} words over limit. Shifting.")
-            factor = len(words_per_screen) / len(words)
-            
         
