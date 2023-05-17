@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+squawk/settings/user_settings.toml
+.pdm-python
+.pdm.toml
