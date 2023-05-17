@@ -5,21 +5,18 @@ import time
 from datetime import datetime
 from time import sleep
 
-import whisper
 import stable_whisper
 from pydavinci import davinci
 from rich import traceback
 from rich.console import Console
 from rich.progress import Progress
-from squawk.settings import SettingsManager
+
+from squawk.settings.manager import settings
 from squawk.utils import core
-from whisper import utils as whisper_utils
-import srt
 
 # Init
-settings = SettingsManager()
-logger = logging.getLogger(__name__)
-logger.setLevel(settings["app"]["loglevel"])
+logger = logging.getLogger("squawk")
+logger.setLevel(settings.app.loglevel)
 traceback.install(show_locals=False)
 
 resolve = davinci.Resolve()
@@ -193,7 +190,7 @@ def tts(media_file: str) -> str:
     if not os.path.exists(media_file):
         raise FileNotFoundError(f"Media file: {media_file} not found!")
 
-    model = stable_whisper.load_model(settings["text_to_speech"]["model"])
+    model = stable_whisper.load_model(settings.text_to_speech.model)
 
     core.notify("Squawk", "Starting transcription")
     start_time = time.time()
@@ -202,7 +199,7 @@ def tts(media_file: str) -> str:
 
         progress.add_task("[yellow]Transcribing", total=None)
 
-        if settings["text_to_speech"]["translate_to_english"]:
+        if settings.text_to_speech.translate_to_english:
             result = model.transcribe(media_file, task="translate")
         else:
             result = model.transcribe(media_file)
@@ -212,8 +209,9 @@ def tts(media_file: str) -> str:
     )
 
     srt_path = os.path.join(
-        settings["paths"]["working_dir"], (os.path.basename(media_file) + ".srt")
+        settings.app.working_dir, (os.path.basename(media_file) + ".srt")
     )
+    result.split_by_length(max_chars=25, max_words=7)
     result.to_srt_vtt(srt_path)
     return srt_path
 
@@ -227,7 +225,7 @@ def import_srt(srt_filepath):
     media_pool = resolve.media_pool
 
     # Create or find path for srt file
-    ensure_path(settings["resolve"]["subtitle_folder_path"])
+    ensure_path(settings.app.subtitle_folder_path)
 
     logger.info(f"[cyan]Importing SRT file: '{srt_filepath}'")
     mpi = media_pool.import_media([srt_filepath])

@@ -1,0 +1,46 @@
+# squawk User configuration file
+
+[app]
+  loglevel = "INFO"
+  check_for_updates = true
+  update_check_url = "https://github.com/in03/squawk" # If you fork the repo, change this to your fork
+  subtitle_folder_path = "/Assets/subtitles" # Create and import the subtitles into this folder structure in Resolve's media pool
+  working_dir = "R:/Squawk"  # Where to store transcription working files
+
+[text_to_speech]
+  model = "small" # [tiny, small, medium, large] - larger models are more accurate
+  translate_to_english = true
+
+[regrouping]
+  enabled = true
+  # Specify -1 to disable float/int values.
+  # Provide an empty list to disable parameters that require a list. 
+
+  [regrouping.split_by_gap]  # Split (in-place) any segment into multiple segments where the duration in between two words > [max_gap]
+    max_gap = 0.1 # The point between any two words greater than this value (seconds) will be split.
+    lock = false # Whether to prevent future splits/merges from altering changes made by this function.
+  
+  [regrouping.split_by_punctuation]  # Split (in-place) any segment at words that starts/ends with specified punctuation(s)
+    punctuation = [['.', ' '], '. ', '?', '?', ',', ', '] # Punctuation(s) to split segments by.
+    lock = false # Whether to prevent future splits/merges from altering changes made by this function.
+
+  [regrouping.split_by_length] # Split segments by their length of characters or words
+    max_chars = -1 # Maximum number of character allowed in segment.
+    max_words = -1 # Maximum number of words allowed in segment.
+    force_len = false # Maintain a relatively constant length for each segment.
+    lock = false
+
+  [regrouping.merge_by_gap] # Merge (in-place) any pair of adjacent segments if the duration in between the pair <= [min_gap]
+    min_gap = 0.1 # Any gaps below or equal to this value (seconds) will be merged.
+    max_words = 3 # Maximum number of words allowed.
+    is_sum_max = false # Whether [max_words] and [max_chars] is applied to the merged segment instead of the individual segments to be merged.
+    lock = false
+
+  [regrouping.merge_by_punctuation] # Merge (in-place) any two segments that has specified punctuation(s) inbetween them
+    punctuation = []
+    max_words = -1
+    max_chars = -1
+    is_sum_max = false
+    lock = false
+
+  regrouping.merge_all_segments = false # Merge all segments into one segment.

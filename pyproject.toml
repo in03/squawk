@@ -24,19 +24,14 @@ dependencies = [
     "commonregex>=1.5.4",
     "srt>=3.5.2",
     "stable-ts @ git+https://github.com/jianfch/stable-ts",
+    "rtoml>=0.9.0",
 ]
 requires-python = ">=3.10"
 license = {text = "MIT"}
 
-[project.optional-dependencies]
-
-
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
-
-[tool]
-[tool.pdm]
 
 [project.scripts]
 squawk = "squawk.app.cli:main"

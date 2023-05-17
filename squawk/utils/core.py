@@ -27,7 +27,7 @@ def setup_rich_logging():
 
 
 setup_rich_logging()
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("squawk")
 
 
 def app_exit(level: int = 0, timeout: int = 0, cleanup_funcs: list = []):
