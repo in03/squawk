@@ -3,22 +3,18 @@
 from enum import Enum
 import logging
 import os
-import shutil
 from typing import Optional
 
 import typer
 from pyfiglet import Figlet
 from rich import print, traceback
-from squawk.utils.core import setup_rich_logging
 from rich.console import Console
 from rich.rule import Rule
 from rich.prompt import Confirm
 from pydavinci import davinci
 from pydavinci.exceptions import ObjectNotFound
 from squawk.app import main
-from squawk.utils import core, pkg_info, checks
-
-setup_rich_logging()
+from squawk.utils import core, pkg_info
 
 # TODO: Add global option to hide banner
 # labels: enhancement
@@ -26,7 +22,7 @@ hide_banner = typer.Option(
     default=False, help="Hide the title and build info on startup"
 )
 
-from squawk.settings import default_settings_file, dotenv_settings_file, user_settings_file
+from squawk.settings import dotenv_settings_file, user_settings_file
 from squawk.settings.manager import settings
 
 logger = logging.getLogger("squawk")
@@ -178,6 +174,8 @@ def config_callback(ctx: typer.Context):
     if settings:
         print("[[magenta]Consolidated configuration]")
         print(settings.dict())
+        from squawk.settings.regrouping_rules import parsed_rules
+        print(parsed_rules)
 
 
 class RWConfigTypes(str, Enum):

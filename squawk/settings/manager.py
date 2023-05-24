@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import os
 import pathlib
-import re
 import shutil
 
 import rich.traceback
@@ -14,12 +13,11 @@ from pydantic import (
     Field,
     ValidationError,
     validator,
+    Extra,
 )
 from pydantic.env_settings import SettingsSourceCallable
 from rich import print
 from rich.panel import Panel
-
-from squawk.settings import regrouping_rules
 
 from squawk.settings import dotenv_settings_file, default_settings_file, user_settings_file
 
@@ -27,11 +25,18 @@ logger = logging.getLogger("squawk")
 rich.traceback.install(show_locals=False)
 
 
-def load_toml_user(_):
+def load_toml_user(_) -> dict:
     user_toml = pathlib.Path(user_settings_file)
     return rtoml.load(user_toml.read_text())
 
 
+def get_regrouping_rules():
+
+    toml = load_toml_user("_")
+    rules: dict = toml['regrouping']
+    print(rules)
+
+    
 class App(BaseModel):
     loglevel: str = Field("WARNING", description="General application loglevel")
     check_for_updates: bool = Field(
@@ -63,6 +68,7 @@ class App(BaseModel):
     
     @validator("working_dir",)
     def ensure_path(cls, v):
+        v = pathlib.Path(v).expanduser()
         if not os.path.exists(v):
             try: 
                 os.makedirs(v)
@@ -84,19 +90,10 @@ class TextToSpeech(BaseModel):
 
 
 class Regrouping(BaseModel):
-    enabled: bool = Field(
+    enable: bool = Field(
         ...,
-        description="Whether to enable transcription regrouping rules"
+        description="Whether or not to enable transcription text regrouping rules"
     )
-    
-    # Regrouping rules defined in separate module
-    split_by_gap: regrouping_rules.SplitByGap
-    split_by_punctuation: regrouping_rules.SplitByPunctuation
-    split_by_length: regrouping_rules.SplitByLength
-    merge_by_gap: regrouping_rules.MergeByGap
-    merge_by_punctuation: regrouping_rules.MergeByPunctuation
-    merge_all_segments: regrouping_rules.MergeAllSegments
-    
 
 class Settings(BaseSettings):
     app: App
@@ -132,9 +129,10 @@ if not os.path.exists(user_settings_file):
     try:
         shutil.copy(default_settings_file, user_settings_file)
     except PermissionError as e:
-        logger.error("Couldn't initialise user settings file! Invalid permi")
+        logger.error("Couldn't initialise user settings file! ")
 
 try:
+    get_regrouping_rules()
     settings = Settings()
 
 except ValidationError as e:

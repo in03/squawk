@@ -1,4 +1,5 @@
-from typing import Any
+import pathlib
+from typing import Any, Optional
 from pydantic import (
     BaseModel,
     BaseSettings,
@@ -6,10 +7,16 @@ from pydantic import (
     ValidationError,
     validator,
 )
+import rtoml
+from rich import print
 
 # TODO: Fix typing for Punctuation rules
 
 # TODO: Add validators
+
+from squawk.settings.manager import settings
+from squawk.settings import manager
+
 
 class SplitByGap(BaseModel):
     """
@@ -135,9 +142,13 @@ class MergeAllSegments(BaseModel):
       description="Whether to merge all segments into one"
   )
 
+pathlib.Path(manager.__file__).parent
 
-# @validator("extension_whitelist", each_item=True)
-# def check_are_file_extensions(cls, v):
-#     if not v.startswith("."):
-#         raise ValueError(f"{v} is not a valid file extension")
-#     return v
+rules_toml = pathlib.Path(settings.regrouping.custom_rules_filepath).expanduser()
+rules = rtoml.load(rules_toml.read_text())
+
+class RulesModel(BaseModel):
+    list[SplitByGap, SplitByPunctuation, SplitByLength, MergeByGap, MergeAllSegments]
+
+parsed_rules = RulesModel(rules)
+print(parsed_rules)
