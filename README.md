@@ -12,6 +12,15 @@
 
 ---
 
+> [!Important]
+>
+> **This repository is no longer maintained**
+> 
+> Davinci Resolve 18.5 supports automatic subtitles natively. It is recommended to upgrade.
+> If you must use an older version of Resolve and still want to use Squawk, it will still function, but there are no plans for updates.
+
+---
+
 #### Automatic subtitles for DaVinci Resolve with OpenAI Whisper :sparkles:
 Save time writing subtitles yourself and don't pay an online service to do it. Squawk generates subtitles for your videos in DaVinci Resolve! 
 It renders audio of your timeline, transcribes it (speech-to-text) with Whisper, and automatically imports the subtitles into Resolve. Whisper can even translate other languages into English before transcribing.
